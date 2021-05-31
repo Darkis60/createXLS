@@ -1,10 +1,10 @@
-package com.jzd1997.structure.controller;
+package com.createXLS.structure.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jzd1997.structure.service.IMainService;
+import com.createXLS.structure.service.IMainService;
 
 @RestController
 public class MainController {

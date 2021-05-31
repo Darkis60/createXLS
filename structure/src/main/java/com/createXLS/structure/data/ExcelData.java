@@ -1,4 +1,4 @@
-package com.jzd1997.structure.data;
+package com.createXLS.structure.data;
 
 import java.io.Serializable;
 import java.util.List;

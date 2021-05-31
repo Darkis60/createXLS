@@ -1,4 +1,4 @@
-package com.jzd1997.structure.dao;
+package com.createXLS.structure.dao;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,8 @@ public class StructureDaoImpl implements IStructureDao {
 		}else{
             //Postgres
             String schema = env.getProperty("database.name");
-            sql =   "SELECT c.relname as 表名,\n" + 
+            sql =   "SELECT c.relname as 表名,\n" +
+					"		cast(obj_description(relfilenode,'pg_class') as varchar) as 表注释,\n" +
                     "       a.attname AS 列名,\n" +
                     "       t.typname||'('||a.attlen||')' AS 数据类型,\n" +
                     "       (CASE WHEN a.attnotnull='t' THEN 'True' ELSE 'False' END) AS 允许为空,\n" +

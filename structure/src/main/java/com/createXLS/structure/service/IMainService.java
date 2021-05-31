@@ -1,4 +1,4 @@
-package com.jzd1997.structure.service;
+package com.createXLS.structure.service;
 
 public interface IMainService {
 	public boolean findStructure();

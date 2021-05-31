@@ -1,17 +1,13 @@
-package com.jzd1997.structure.service;
+package com.createXLS.structure.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.createXLS.structure.dao.IStructureDao;
+import com.createXLS.structure.util.ExportExcelUtils;
+import com.createXLS.structure.util.MyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
-import com.jzd1997.structure.dao.IStructureDao;
-import com.jzd1997.structure.util.ExportExcelUtils;
-import com.jzd1997.structure.util.MyUtils;
 
 @Service
 public class MainServiceImpl implements IMainService{
@@ -26,6 +22,8 @@ public class MainServiceImpl implements IMainService{
 		List<Map<String,Object>> list = structureDao.findStructure();
 		Map<String,List<List<String>>> sheets = new LinkedHashMap<String,List<List<String>>>();
 		String tbl = "";
+		String comment = "";
+		Map<String, String> tbl_comment = new LinkedHashMap<String, String>();
 		// 根据每列数据进行循环
 		List<List<String>> rows = null;
 		List<String> cols = null;
@@ -35,6 +33,7 @@ public class MainServiceImpl implements IMainService{
 					sheets.put(tbl, rows);
 				}
 				tbl = MyUtils.toString(record.get("表名"));
+				comment = MyUtils.toString(record.get("表注释"));
 				rows = new ArrayList<List<String>>();
 			}
 			cols = new ArrayList<String>();
@@ -46,10 +45,13 @@ public class MainServiceImpl implements IMainService{
 			cols.add(MyUtils.toString(record.get("默认值")));
 			cols.add(MyUtils.toString(record.get("备注")));
 			rows.add(cols);
+			tbl_comment.put(tbl, comment);
 		}
 		sheets.put(tbl, rows);
-		String fname = env.getProperty("output.path") + env.getProperty("database.name") + ".xlsx";
-	    ExportExcelUtils.createExcel(sheets,fname);
+		//tbl_comment.put(tbl, comment);
+		//下载地址为project的根目录下
+		String fname = env.getProperty("database.name") + ".xlsx";
+	    ExportExcelUtils.createExcel(sheets,tbl_comment,fname);
 		return true;
 	}
 

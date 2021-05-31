@@ -1,4 +1,4 @@
-package com.jzd1997.structure.util;
+package com.createXLS.structure.util;
 
 public class MyUtils {
 	public static String toString(Object obj) {

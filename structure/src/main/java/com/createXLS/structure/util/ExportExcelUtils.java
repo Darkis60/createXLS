@@ -1,4 +1,4 @@
-package com.jzd1997.structure.util;
+package com.createXLS.structure.util;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -7,17 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExportExcelUtils {
@@ -28,45 +21,45 @@ public class ExportExcelUtils {
 		style.setBorderLeft(BorderStyle.THIN);
 		style.setBorderRight(BorderStyle.THIN);
 		style.setWrapText(true);
-		Sheet sheetHistory = wb.createSheet("变更履历");
-		sheetHistory.setColumnWidth(0, 8*256);
-		sheetHistory.setColumnWidth(1, 12*256);
-		sheetHistory.setColumnWidth(2, 12*256);
-		sheetHistory.setColumnWidth(3, 25*256);
-		sheetHistory.setColumnWidth(4, 15*256);
-		sheetHistory.setColumnWidth(5, 40*256);
-		sheetHistory.setColumnWidth(6, 40*256);
-		for(int i=0;i<25;i++) {
-			Row row = sheetHistory.createRow(i);
-			Cell cell0 = row.createCell(0);
-			Cell cell1 = row.createCell(1);
-			Cell cell2 = row.createCell(2);
-			Cell cell3 = row.createCell(3);
-			Cell cell4 = row.createCell(4);
-			Cell cell5 = row.createCell(5);
-			Cell cell6 = row.createCell(6);
-			cell0.setCellStyle(style);
-			cell1.setCellStyle(style);
-			cell2.setCellStyle(style);
-			cell3.setCellStyle(style);
-			cell4.setCellStyle(style);
-			cell5.setCellStyle(style);
-			cell6.setCellStyle(style);
-			if(i==0) {
-				cell0.setCellValue("序号");
-				cell1.setCellValue("变更日期");
-				cell2.setCellValue("变更人");
-				cell3.setCellValue("数据表");
-				cell4.setCellValue("变更类型");
-				cell5.setCellValue("变更内容");
-				cell6.setCellValue("变更原因");
-			}else {
-				cell0.setCellFormula("row()-1");
-			}
-		}
+//		Sheet sheetHistory = wb.createSheet("变更履历");
+//		sheetHistory.setColumnWidth(0, 8*256);
+//		sheetHistory.setColumnWidth(1, 12*256);
+//		sheetHistory.setColumnWidth(2, 12*256);
+//		sheetHistory.setColumnWidth(3, 25*256);
+//		sheetHistory.setColumnWidth(4, 15*256);
+//		sheetHistory.setColumnWidth(5, 40*256);
+//		sheetHistory.setColumnWidth(6, 40*256);
+//		for(int i=0;i<25;i++) {
+//			Row row = sheetHistory.createRow(i);
+//			Cell cell0 = row.createCell(0);
+//			Cell cell1 = row.createCell(1);
+//			Cell cell2 = row.createCell(2);
+//			Cell cell3 = row.createCell(3);
+//			Cell cell4 = row.createCell(4);
+//			Cell cell5 = row.createCell(5);
+//			Cell cell6 = row.createCell(6);
+//			cell0.setCellStyle(style);
+//			cell1.setCellStyle(style);
+//			cell2.setCellStyle(style);
+//			cell3.setCellStyle(style);
+//			cell4.setCellStyle(style);
+//			cell5.setCellStyle(style);
+//			cell6.setCellStyle(style);
+//			if(i==0) {
+//				cell0.setCellValue("序号");
+//				cell1.setCellValue("变更日期");
+//				cell2.setCellValue("变更人");
+//				cell3.setCellValue("数据表");
+//				cell4.setCellValue("变更类型");
+//				cell5.setCellValue("变更内容");
+//				cell6.setCellValue("变更原因");
+//			}else {
+//				cell0.setCellFormula("row()-1");
+//			}
+//		}
 	}
 	
-	public static boolean createExcel(Map<String, List<List<String>>> map, String filename) {
+	public static boolean createExcel(Map<String, List<List<String>>> map,Map<String, String> tblComment, String filename) {
 		Workbook wb = new XSSFWorkbook(); // or new XSSFWorkbook();
 		createHistory(wb);
 		// Title cells
@@ -88,12 +81,28 @@ public class ExportExcelUtils {
 		style1.setRightBorderColor(IndexedColors.BLACK.getIndex());
 		style1.setBorderTop(BorderStyle.THIN);
 		style1.setTopBorderColor(IndexedColors.BLACK.getIndex());
+		style1.setWrapText(true);
+		style1.setVerticalAlignment(VerticalAlignment.CENTER);
 		Sheet sheetIndex = wb.createSheet("索引");
 		List<String> tbls = new ArrayList<String>();
 		for (String key : map.keySet()) {
-			Sheet sheet = wb.createSheet(key);
 			tbls.add(key);
-			Row row = sheet.createRow(0);
+			Sheet sheet = wb.createSheet(key);
+			//字体设置
+			CellStyle tableCommentStyle = wb.createCellStyle();
+			Font font = wb.createFont();
+			//tableCommentFont.setFontHeightInPoints((short) 14);
+			font.setFontName("黑体");
+			font.setBold(true);
+			tableCommentStyle.setFont(font);
+			Row tableAndComment = sheet.createRow(0);
+			Cell tableName = tableAndComment.createCell(1);
+			tableName.setCellValue(key);
+			tableName.setCellStyle(tableCommentStyle);
+			Cell tablecomments = tableAndComment.createCell(6);
+			tablecomments.setCellValue(tblComment.get(key));
+			tablecomments.setCellStyle(tableCommentStyle);
+			Row row = sheet.createRow(2);
 			Cell cell0 = row.createCell(0);
 			cell0.setCellValue("编号");
 			cell0.setCellStyle(style);
@@ -117,10 +126,10 @@ public class ExportExcelUtils {
 			cell6.setCellStyle(style);
 			List<List<String>> list = map.get(key);
 			for (int index = 0; index < list.size(); index++) {
-				Row row1 = sheet.createRow(index + 1);
+				Row row1 = sheet.createRow(index + 3);
 				for (int i = 0; i < 4; i++) {
 					Cell cell_0 = row1.createCell(0);
-					cell_0.setCellFormula("row()-1");
+					cell_0.setCellFormula("row()-3");
 					cell_0.setCellStyle(style1);
 					Cell cell_1 = row1.createCell(1);
 					cell_1.setCellValue(list.get(index).get(0));
@@ -142,10 +151,15 @@ public class ExportExcelUtils {
 					cell_6.setCellStyle(style1);
 				}
 			}
+			//单元格设置
+			sheet.setColumnWidth(1, 9000);
+			sheet.setColumnWidth(2, 3900);
+			sheet.setColumnWidth(6, 12000);
 		}
 		CreationHelper createHelper = wb.getCreationHelper();
 		/* 设置为超链接的样式 */
 		CellStyle linkStyle = wb.createCellStyle();
+		CellStyle commentStyle = wb.createCellStyle();
 		Font cellFont = wb.createFont();
 		cellFont.setUnderline((byte) 1);
 		cellFont.setColor(IndexedColors.BLUE.getIndex());
@@ -153,6 +167,7 @@ public class ExportExcelUtils {
 		for (int k = 0; k < tbls.size(); k++) {
 			Row row = sheetIndex.createRow(k + 1);
 			Cell linkCell = row.createCell(1);
+			Cell commentCell = row.createCell(3);
 			Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.DOCUMENT);
 			// "#"表示本文档 "明细页面"表示sheet页名称 "A10"表示第几列第几行
 			hyperlink.setAddress("#" + tbls.get(k) + "!A1");
@@ -160,7 +175,11 @@ public class ExportExcelUtils {
 			// 点击进行跳转
 			linkCell.setCellValue(tbls.get(k));
 			linkCell.setCellStyle(linkStyle);
+			commentCell.setCellValue(tblComment.get(tbls.get(k)));
+			commentCell.setCellStyle(commentStyle);
 		}
+		sheetIndex.setColumnWidth(1, 8000);
+		sheetIndex.setColumnWidth(3, 8000);
 		try (OutputStream fileOut = new FileOutputStream(filename)) {
 			wb.write(fileOut);
 		} catch (Exception e) {
